@@ -4,10 +4,11 @@ import base64
 from fastapi import HTTPException
 
 class BaseRouteHandler:
-    def __init__(self, request_body, psql_client) -> None:
+    def __init__(self, request_body, psql_client, redis_client) -> None:
         self.request_body       = request_body
         self.decoded_body       = json.loads(base64.b64decode(self.request_body).decode())
         self.psql_client        = psql_client
+        self.redis_client       = redis_client
         self.results            = None
 
         try:

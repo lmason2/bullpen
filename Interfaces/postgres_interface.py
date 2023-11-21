@@ -1,9 +1,10 @@
 import logging
 from typing import Any
 import uuid
+from datetime import datetime
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from sqlalchemy_utils import database_exists, create_database
-from sqlalchemy import String, Integer, Uuid, Double, DateTime, ForeignKey, create_engine, Column, PrimaryKeyConstraint
+from sqlalchemy import String, Boolean, Uuid, Double, DateTime, ForeignKey, create_engine, Column, PrimaryKeyConstraint
 
 class Base(DeclarativeBase):
     pass
@@ -97,22 +98,47 @@ class MenuOption(Base):
 
     def __repr__(self) -> str:
         return f'({self.vendor_id}) ({self.product_id})'
+    
+class Session(Base):
+    __tablename__       = 'sessions'
+
+    session_id          = Column('session_id', Uuid, primary_key=True)
+    session_date        = Column('session_date', DateTime)
+    session_name        = Column('session_name', String)
+    team_id             = Column(Uuid, ForeignKey('teams.team_id'))
+    active              = Column('active', Boolean)
+
+    def __init__(self, session_date, session_name, team_id, active):
+        self.session_id     = uuid.uuid4()
+        self.session_date   = session_date
+        self.session_name   = session_name
+        self.team_id        = team_id
+        self.active         = active
+
+    def __repr__(self) -> str:
+        return f'{self.session_id} ({self.session_date}) ({self.session_name}) ({self.team_id}) ({self.active})'
 
 class Transaction(Base):
     __tablename__       = 'transactions'
 
     transaction_id      = Column('transaction_id', Uuid, primary_key=True)
-    order_number        = Column('order_number', Uuid)
+    order_id            = Column('order_id', Uuid)
     date_time           = Column('date_time', DateTime)
     product_id          = Column(Uuid, ForeignKey('products.product_id'))
+    session_id          = Column(Uuid, ForeignKey('sessions.session_id'))
+    status              = Column('status', String)
+    seat                = Column('seat', String)
 
-    def __init__(self, order_number, product_id):
+    def __init__(self, order_id, product_id, session_id, status, seat):
         self.transaction_id     = uuid.uuid4()
-        self.order_number       = order_number
+        self.order_id           = order_id
         self.product_id         = product_id
+        self.session_id         = session_id
+        self.status             = status
+        self.seat               = seat
 
     def __repr__(self) -> str:
-        return f'{self.transaction_id} ({self.order_number}) ({self.product_id})'
+        return f'{self.transaction_id} ({self.order_id}) ({self.product_id}) ({self.session_id}) ({self.status}) ({self.seat})'
 
 class PostgresClient:
     
@@ -126,7 +152,7 @@ class PostgresClient:
             create_database(url)
         logging.info('attaching engine to url')
         self.engine = create_engine(url)
-        # Base.metadata.create_all(bind=self.engine)
+        Base.metadata.create_all(bind=self.engine)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
@@ -137,6 +163,9 @@ class PostgresClient:
     def query(self, object):
         results = self.session.query(object).all()
         return results
+    
+    def session_commit(self):
+        self.session.commit()
     
 if __name__ == '__main__':
     ## SEED DATABASE
@@ -305,20 +334,22 @@ if __name__ == '__main__':
     menu_options.extend([vendor_ten_bud_light, vendor_ten_coors_light, vendor_ten_miller_light, vendor_ten_voodoo_ranger,
                          vendor_eleven_bud_light, vendor_eleven_montucky, vendor_eleven_voodoo_ranger,
                          vendor_twelve_bud_light, vendor_twelve_voodoo_ranger])
+    
+    session_zero = Session(datetime.now(), 'session_zero', arizona_cardinals.team_id ,True)
 
-    # ## SEED VALUES
-    # ##------------------------------
-    # for product in products:
-    #     psql_client.add(product)
+    ## SEED VALUES
+    ##------------------------------
+    for product in products:
+        psql_client.add(product)
 
-    # for stadium in stadiums:
-    #     psql_client.add(stadium)
+    for stadium in stadiums:
+        psql_client.add(stadium)
 
-    # for team in teams:
-    #     psql_client.add(team)
+    for team in teams:
+        psql_client.add(team)
 
-    # for vendor in vendors:
-    #     psql_client.add(vendor)
+    for vendor in vendors:
+        psql_client.add(vendor)
 
-    # for option in menu_options:
-    #     psql_client.add(option)
+    for option in menu_options:
+        psql_client.add(option)

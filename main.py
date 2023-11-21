@@ -1,12 +1,14 @@
 import os
+import json
 import logging
 from typing_extensions import Annotated
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, Request, HTTPException, Response
 from dotenv import load_dotenv
 from pydantic import Base64Bytes, BaseModel
 
 from Factories.route_handler_factory import RouteHandlerFactory
 from Interfaces.postgres_interface import PostgresClient
+from Interfaces.redis_interface import RedisClient
 
 load_dotenv()
 
@@ -30,9 +32,29 @@ async def root():
 
 @app.post('/api/backyard/v1/{route_endpoint}')
 async def handle_route(request: Request, route_endpoint, request_body: ParsingDependency):
-    route_handler = RouteHandlerFactory.get_handler(route_endpoint, request_body, psql_client=request.app.state.psql_client)
+    try:
+        route_handler = RouteHandlerFactory.get_handler(route_endpoint, request_body, 
+                                                        psql_client=request.app.state.psql_client, 
+                                                        redis_client=request.app.state.redis_client)
+    except HTTPException as error:
+        return Response(json.dumps({
+            'data': {},
+            'message': error.detail
+        }), error.status_code, error.headers)
     return route_handler.results
 
 @app.on_event('startup')
 async def startup():
-    app.state.psql_client   = PostgresClient('lukemason', 'Lukrative11!', 'localhost', '5432', 'bullpen')
+    try:
+        app.state.psql_client   = PostgresClient('lukemason', 'Lukrative11!', 'localhost', '5432', 'bullpen')
+        logger.info('Successfully connected to postgres')
+    except Exception as error:
+        logger.error('Error connecting to postgres')
+
+    try:
+        app.state.redis_client  = RedisClient()
+        logger.info('Successfully connected to Redis')
+    except Exception as error:
+        logger.error('Error connecting to Redis')
+        logger.error(f'Error: {error}')
+
