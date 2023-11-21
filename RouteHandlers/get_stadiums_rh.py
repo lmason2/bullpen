@@ -5,7 +5,11 @@ from Interfaces.postgres_interface import Stadium
 class GetStadiumsRouteHandler(BaseRouteHandler):
     def process_route(self):
         try:
-            self.results = self.psql_client.query(Stadium)
+            results = self.psql_client.query(Stadium)
+            self.results = {
+                'data': results,
+                'message': 'Successfully retrieved stadiums'
+            }
             return
         except Exception:
             raise HTTPException(500, 'Error retrieving data', {})

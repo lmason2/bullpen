@@ -5,7 +5,11 @@ from Interfaces.postgres_interface import Product
 class GetProductsRouteHandler(BaseRouteHandler):
     def process_route(self):
         try:
-            self.results = self.psql_client.query(Product)
+            results = self.psql_client.query(Product)
+            self.results = {
+                'data': results,
+                'message': 'Successfully retrieved products'
+            }
             return
         except Exception:
             raise HTTPException(500, 'Error retrieving data', {})

@@ -18,4 +18,5 @@ encoded_payload = base64.b64encode(json.dumps(PAYLOAD).encode())
 
 response = requests.post(BASE_URL, data=encoded_payload, headers=HEADERS)
 
-print(response.text)
+json_response = json.loads(response.text)
+print(json.dumps(json_response, indent=4))
