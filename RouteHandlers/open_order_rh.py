@@ -13,6 +13,7 @@ class OpenOrderRouteHandler(BaseRouteHandler):
                 order_id        = self.decoded_body['order_id']
                 product_ids     = self.decoded_body['product_ids']
                 session_id      = self.decoded_body['session_id']
+                seat            = self.decoded_body['seat']
             except Exception as error:
                 print(error)
                 raise Exception(error)
@@ -22,7 +23,7 @@ class OpenOrderRouteHandler(BaseRouteHandler):
             try:
                 transactions = []
                 for product_id in product_ids:
-                    transaction = Transaction(order_id, product_id, session_id)
+                    transaction = Transaction(order_id, product_id, session_id, 'requested', seat)
                     transactions.append(transaction)
             except Exception as error:
                 print(error)
@@ -42,7 +43,8 @@ class OpenOrderRouteHandler(BaseRouteHandler):
                             'order_id': transaction.order_id,
                             'session_id': session_id,
                             'transactions': transactions_hset,
-                            'status': 'requested' # requested, received, filled, delivered
+                            'status': 'requested', # requested, received, filled, delivered
+                            'seat': seat,
                         }
                     }
                     collapsed_dict = collapse_dictionary_for_hset(order_hset, dict(), '')

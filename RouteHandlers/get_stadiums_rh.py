@@ -11,5 +11,6 @@ class GetStadiumsRouteHandler(BaseRouteHandler):
                 'message': 'Successfully retrieved stadiums'
             }
             return
-        except Exception:
+        except Exception as error:
+            print(error)
             raise HTTPException(500, 'Error retrieving data', {})

@@ -21,21 +21,27 @@ class CloseSessionRouteHandler(BaseRouteHandler):
 
             ## Close outstanding transactions
             ##------------------------------
-            transactions = []
+            p_transactions = []
             try:
                 for _, v in session_record.items():
                     if v['status'] != 'delivered':
-                        v['status'] = 'unfulfilled'
-                    transactions = ['transactions']
+                        v['status'] = 'incomplete'
+                    transactions = v['transactions']
                     for transaction in transactions:
-                        p_transaction = Transaction(v['order_id'], transaction['product_id'], session_id) # add status
-                        transactions.append(p_transaction)
+                        p_transaction = Transaction(v['order_id'], transaction['product_id'], session_id, v['status'], v['seat']) # add status
+                        p_transactions.append(p_transaction)
             except Exception as error:
                 print(error)
                 raise Exception(error)
             
             ## Write transactions to postgres
             ##------------------------------
+            try:
+                for transaction in p_transactions:
+                    self.psql_client.add(transaction)
+            except Exception as error:
+                print(error)
+                raise Exception(error)
 
             ## Delete transactions from redis
             ##------------------------------

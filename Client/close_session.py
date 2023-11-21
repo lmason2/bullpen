@@ -12,7 +12,7 @@ HEADERS = {
 }
 
 PAYLOAD = {
-    'session_id': '6093928c-0b5b-4ebc-8746-953e41249b25'
+    'session_id': "e020be21-a0e6-4311-acf7-6f6e4453b290",
 }
 
 encoded_payload = base64.b64encode(json.dumps(PAYLOAD).encode())

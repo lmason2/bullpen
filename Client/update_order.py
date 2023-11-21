@@ -13,8 +13,8 @@ HEADERS = {
 }
 
 PAYLOAD = {
-    "order_id": "53ad392e-a8fd-46a4-9be2-5ace926d87ff",
-    "session_id": "9f768346-8228-44a7-95de-d222a701aca4",
+    "order_id": "5b678743-8b9f-4830-8046-6b837dfb7b25",
+    "session_id": "e020be21-a0e6-4311-acf7-6f6e4453b290",
     'status': 'delivered',
 }
 

@@ -126,15 +126,19 @@ class Transaction(Base):
     date_time           = Column('date_time', DateTime)
     product_id          = Column(Uuid, ForeignKey('products.product_id'))
     session_id          = Column(Uuid, ForeignKey('sessions.session_id'))
+    status              = Column('status', String)
+    seat                = Column('seat', String)
 
-    def __init__(self, order_id, product_id, session_id):
+    def __init__(self, order_id, product_id, session_id, status, seat):
         self.transaction_id     = uuid.uuid4()
         self.order_id           = order_id
         self.product_id         = product_id
         self.session_id         = session_id
+        self.status             = status
+        self.seat               = seat
 
     def __repr__(self) -> str:
-        return f'{self.transaction_id} ({self.order_id}) ({self.product_id}) ({self.session_id})'
+        return f'{self.transaction_id} ({self.order_id}) ({self.product_id}) ({self.session_id}) ({self.status}) ({self.seat})'
 
 class PostgresClient:
     
@@ -333,19 +337,19 @@ if __name__ == '__main__':
     
     session_zero = Session(datetime.now(), 'session_zero', arizona_cardinals.team_id ,True)
 
-    # ## SEED VALUES
-    # ##------------------------------
-    # for product in products:
-    #     psql_client.add(product)
+    ## SEED VALUES
+    ##------------------------------
+    for product in products:
+        psql_client.add(product)
 
-    # for stadium in stadiums:
-    #     psql_client.add(stadium)
+    for stadium in stadiums:
+        psql_client.add(stadium)
 
-    # for team in teams:
-    #     psql_client.add(team)
+    for team in teams:
+        psql_client.add(team)
 
-    # for vendor in vendors:
-    #     psql_client.add(vendor)
+    for vendor in vendors:
+        psql_client.add(vendor)
 
-    # for option in menu_options:
-    #     psql_client.add(option)
+    for option in menu_options:
+        psql_client.add(option)
