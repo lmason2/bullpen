@@ -12,6 +12,6 @@ logger.debug('Running root.py from Client/')
 
 BASE_URL = os.getenv('BULLPEN_BASE_URL')
 
-response = requests.get('http://127.0.0.1:8000')
+response = requests.get('http://127.0.0.1:8000/health-check')
 
 print(response.text)
