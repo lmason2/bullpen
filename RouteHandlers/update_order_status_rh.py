@@ -15,7 +15,6 @@ class UpdateOrderStatusRouteHandler(BaseRouteHandler):
                 collapsed_session = self.redis_client.connection.hgetall(session_id)
                 session_record = expand_dictionary_from_hget(collapsed_session, dict())
                 order_record = session_record[order_id]
-                print(order_record)
             except Exception as error:
                 print(error)
                 raise Exception(error)

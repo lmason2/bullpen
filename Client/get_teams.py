@@ -6,7 +6,7 @@ import requests
 import base64
 import json
 
-BASE_URL = 'http://127.0.0.1:8000/api/backyard/v1/get-teams'
+BASE_URL = 'http://127.0.0.1:8000/api/bullpen/v1/get-teams'
 
 HEADERS = {
 }

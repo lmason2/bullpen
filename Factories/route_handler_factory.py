@@ -9,6 +9,7 @@ from RouteHandlers.open_session_rh import OpenSessionRouteHandler
 from RouteHandlers.close_session_rh import CloseSessionRouteHandler
 from RouteHandlers.open_order_rh import OpenOrderRouteHandler
 from RouteHandlers.update_order_status_rh import UpdateOrderStatusRouteHandler
+from RouteHandlers.get_session_orders import GetSessionOrdersRouteHandler
 
 ROUTE_MAP = {
     'get-stadiums': GetStadiumsRouteHandler,
@@ -20,6 +21,7 @@ ROUTE_MAP = {
     'close-session': CloseSessionRouteHandler,
     'open-order': OpenOrderRouteHandler,
     'update-order': UpdateOrderStatusRouteHandler,
+    'get-session-orders': GetSessionOrdersRouteHandler
 }
 
 class RouteHandlerFactory:

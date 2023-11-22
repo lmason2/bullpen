@@ -30,7 +30,7 @@ ParsingDependency = Annotated[str, Depends(parse_body)]
 async def root():
     return {"status": "Alive"}
 
-@app.post('/api/backyard/v1/{route_endpoint}')
+@app.post('/api/bullpen/v1/{route_endpoint}')
 async def handle_route(request: Request, route_endpoint, request_body: ParsingDependency):
     try:
         route_handler = RouteHandlerFactory.get_handler(route_endpoint, request_body, 

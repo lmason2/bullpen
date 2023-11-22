@@ -7,7 +7,7 @@ import base64
 import json
 import uuid
 
-BASE_URL = 'http://127.0.0.1:8000/api/backyard/v1/update-order'
+BASE_URL = 'http://127.0.0.1:8000/api/bullpen/v1/update-order'
 
 HEADERS = {
 }
